@@ -32,7 +32,7 @@ export const NAV = [
 export const PAGE_TITLES = ['home', 'saved', 'universities', 'scholarships', 'majors', 'compare', 'dream', 'applications', 'calendar', 'tests', 'essays', 'essay-library', 'ai', 'channels', 'resources', 'files', 'health', 'profile', 'personalize'];
 
 export function logo(size = 38) {
-  return `<span class="logo" style="width:${size}px;height:${size}px"><img src="assets/emblem-128.webp" alt="" onerror="this.remove()">V</span>`;
+  return `<span class="logo" style="width:${size}px;height:${size}px"><img src="assets/emblem-128.webp" alt="" onerror="this.onerror=null;this.src='assets/emblem.svg'"></span>`;
 }
 
 export function shell(ctx, inner) {
@@ -128,7 +128,7 @@ export function landing(ctx) {
       </div>
       <div class="hero-art">
         <div class="float-chip glass" style="right:6%;top:12%">${icon('check', 18)}<div><b>IELTS 6.5</b><span>Meets the minimum at ${DATA.unis.filter((u) => u.ielts != null && u.ielts <= 6.5).length} of ${DATA.unis.filter((u) => u.ielts != null).length} verified</span></div></div>
-        <img class="emblem" src="assets/emblem-128.webp" alt="" onerror="this.remove()">
+        <img class="emblem" src="assets/emblem-128.webp" alt="" onerror="this.onerror=null;this.src='assets/emblem.svg'">
         <div class="word">VERTEX UNITY</div>
         <div class="float-chip glass" style="left:5%;bottom:10%">${icon('calendar', 18)}<div><b>Stipendium Hungaricum</b><span>Typical deadline · Jan 15</span></div></div>
       </div>

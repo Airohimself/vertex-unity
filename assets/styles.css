@@ -24,7 +24,7 @@
   --pad: 22px;
   --gap: 16px;
   --font: "Figtree", "Outfit", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
-  --wall: url("campus.jpg");
+  --wall: url("vu.jpg"), url("campus.jpg");
   --wall-fallback: radial-gradient(1200px 700px at 15% 10%, #1f4b8f 0, transparent 60%), radial-gradient(900px 600px at 90% 20%, #c0773a 0, transparent 55%), radial-gradient(900px 700px at 60% 100%, #2a2f6b 0, transparent 60%), #08101f;
   color-scheme: dark;
 }
@@ -244,9 +244,9 @@ svg.i { flex: none; }
 
 /* ---------- drawer / modal / toast / palette ---------- */
 .scrim { position: fixed; inset: 0; background: rgba(2, 4, 10, .5); backdrop-filter: blur(6px); z-index: 60; animation: fade .2s; }
-.drawer { position: fixed; top: 10px; right: 10px; bottom: 10px; width: min(560px, calc(100vw - 20px)); z-index: 61; overflow-y: auto; padding: 18px; animation: slidein .25s ease; }
+.drawer { position: fixed; top: 10px; right: 10px; bottom: 10px; width: min(560px, calc(100vw - 20px)); z-index: 61; overflow-y: auto; padding: 18px; }
 .drawer .x { position: sticky; top: 0; float: right; z-index: 2; }
-.modal { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(460px, calc(100vw - 24px)); z-index: 62; padding: 26px; max-height: 92vh; overflow-y: auto; animation: pop .2s; }
+.modal { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(460px, calc(100vw - 24px)); z-index: 62; padding: 26px; max-height: 92vh; overflow-y: auto; }
 .palette { position: fixed; left: 50%; top: 14vh; transform: translateX(-50%); width: min(640px, calc(100vw - 24px)); z-index: 70; padding: 12px; animation: pop .15s; }
 .palette input { font-size: 1.05rem; padding: 14px; }
 .palette .res { max-height: 52vh; overflow-y: auto; margin-top: 8px; display: grid; gap: 4px; }
@@ -254,7 +254,7 @@ svg.i { flex: none; }
 .palette .res a:hover, .palette .res a.sel { background: var(--glass-hi); }
 .pop { position: fixed; top: 74px; right: 20px; width: 340px; max-width: calc(100vw - 24px); z-index: 65; padding: 14px; animation: pop .15s; }
 #toast-root { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); z-index: 90; display: grid; gap: 8px; }
-.toast { padding: 12px 18px; border-radius: 999px; font-weight: 600; font-size: .9rem; animation: pop .2s; }
+.toast { padding: 12px 18px; border-radius: 999px; font-weight: 600; font-size: .9rem; }
 @keyframes fade { from { opacity: 0; } }
 @keyframes slidein { from { transform: translateX(40px); opacity: 0; } }
 @keyframes pop { from { opacity: 0; transform: translate(-50%, calc(-50% + 8px)); } }
@@ -376,3 +376,89 @@ input[type=range] { padding: 0; accent-color: var(--accent); }
   .topbar { border-radius: 22px; }
   .search-box .kbd { display: none; }
 }
+
+/* =====================================================================
+   Motion layer: smooth, GPU-friendly animations.
+   Everything here respects Personalize -> Accessibility -> Motion and the
+   system "reduce motion" setting (see the end of this block).
+   ===================================================================== */
+:root { --ease: cubic-bezier(.2, .7, .2, 1); --solid: rgba(16, 26, 50, .66); }
+:root[data-theme="light"] { --solid: rgba(255, 255, 255, .72); }
+
+@keyframes rise { from { opacity: 0; transform: translateY(18px); } }
+@keyframes pop-in { from { opacity: 0; transform: scale(.94); } }
+@keyframes grow { from { transform: scaleX(0); } }
+@keyframes floaty { 50% { transform: translateY(-9px); } }
+@keyframes emblem-float { 0%, 100% { transform: translate(-50%, -50%); } 50% { transform: translate(-50%, calc(-50% - 10px)); } }
+@keyframes toastin { from { opacity: 0; transform: translateY(12px) scale(.96); } }
+@keyframes drawer-in { from { transform: translateX(48px); opacity: 0; } }
+@keyframes shimmer { to { background-position: -200% 0; } }
+
+/* page entrance: plays only when the route changes (main.js toggles .route-enter) */
+.route-enter .main > *:not(.topbar) { animation: rise .55s var(--ease) backwards; }
+.route-enter .main > *:nth-child(3) { animation-delay: .05s; }
+.route-enter .main > *:nth-child(4) { animation-delay: .1s; }
+.route-enter .main > *:nth-child(5) { animation-delay: .15s; }
+.route-enter .main > *:nth-child(n+6) { animation-delay: .2s; }
+.route-enter .grid > *, .route-enter .stack > *, .route-enter .kanban > * { animation: rise .55s var(--ease) backwards; }
+.route-enter .grid > *:nth-child(1), .route-enter .stack > *:nth-child(1), .route-enter .kanban > *:nth-child(1) { animation-delay: .08s; }
+.route-enter .grid > *:nth-child(2), .route-enter .stack > *:nth-child(2), .route-enter .kanban > *:nth-child(2) { animation-delay: .12s; }
+.route-enter .grid > *:nth-child(3), .route-enter .stack > *:nth-child(3), .route-enter .kanban > *:nth-child(3) { animation-delay: .16s; }
+.route-enter .grid > *:nth-child(4), .route-enter .stack > *:nth-child(4), .route-enter .kanban > *:nth-child(4) { animation-delay: .2s; }
+.route-enter .grid > *:nth-child(5), .route-enter .stack > *:nth-child(5) { animation-delay: .24s; }
+.route-enter .grid > *:nth-child(6), .route-enter .stack > *:nth-child(6) { animation-delay: .28s; }
+.route-enter .grid > *:nth-child(7), .route-enter .stack > *:nth-child(7) { animation-delay: .32s; }
+.route-enter .grid > *:nth-child(8), .route-enter .stack > *:nth-child(8) { animation-delay: .36s; }
+.route-enter .grid > *:nth-child(n+9), .route-enter .stack > *:nth-child(n+9) { animation-delay: .4s; }
+.route-enter .progress i, .route-enter .bar .track i { transform-origin: left; animation: grow .9s var(--ease) .25s backwards; }
+
+/* landing: hero entrance, floating chips, scroll reveal */
+.land .hero > div:first-child > * { animation: rise .8s var(--ease) backwards; }
+.land .hero > div:first-child > :nth-child(2) { animation-delay: .08s; }
+.land .hero > div:first-child > :nth-child(3) { animation-delay: .16s; }
+.land .hero > div:first-child > :nth-child(4) { animation-delay: .24s; }
+.land .hero > div:first-child > :nth-child(5) { animation-delay: .32s; }
+.land .hero-art { animation: pop-in 1s var(--ease) .15s backwards; }
+.land .float-chip { animation: floaty 7s ease-in-out infinite; }
+.land .float-chip + .emblem + .word + .float-chip { animation-delay: -3.5s; }
+.land .emblem { animation: emblem-float 8s ease-in-out infinite; }
+.land-nav { animation: rise .6s var(--ease) backwards; }
+.reveal { opacity: 0; }
+.reveal.in { opacity: 1; animation: rise .8s var(--ease) backwards; }
+.reveal.in:nth-child(2) { animation-delay: .08s; }
+.reveal.in:nth-child(3) { animation-delay: .16s; }
+.reveal.in:nth-child(4) { animation-delay: .24s; }
+
+/* overlays */
+.scrim { animation: fade .25s ease; }
+.drawer { animation: drawer-in .35s var(--ease); }
+@keyframes modal-in { from { opacity: 0; transform: translate(-50%, -47%) scale(.96); } }
+.modal { animation: modal-in .28s var(--ease); }
+.toast { animation: toastin .3s var(--ease); }
+
+/* micro-interactions */
+.btn:active, .chip:active, .qa:active { transform: scale(.96); }
+.btn, .chip, .qa, .stepitem, .day, .chan, .pick { transition: transform .18s var(--ease), background-color .2s, border-color .2s, box-shadow .2s, color .2s, opacity .2s; }
+.glass, input, select, textarea { transition: background-color .35s, border-color .25s, color .35s; }
+.tilt { transition: transform .22s var(--ease), border-color .18s, box-shadow .18s; }
+.progress i, .bar .track i { transition: width .6s var(--ease); }
+.nav a { transition: background-color .2s, border-color .2s, transform .18s var(--ease); }
+.nav a:hover { transform: translateX(3px); }
+.ring { transition: background .6s; }
+.skeleton { background: linear-gradient(90deg, var(--glass-lo) 25%, var(--glass-hi) 50%, var(--glass-lo) 75%); background-size: 200% 100%; animation: shimmer 1.4s linear infinite; border-radius: var(--radius-sm); }
+
+/* scroll performance: long lists use lighter cards (no per-card backdrop blur;
+   the wallpaper behind them is already blurred) */
+.uni.glass, .sch.glass, .feat.glass, .grid > .glass.hover-lift, .stack > .glass.hover-lift {
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+  background: linear-gradient(180deg, var(--glass-hi), var(--glass-lo)), var(--solid);
+}
+
+/* reduced motion: system setting or Personalize -> Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  .reveal { opacity: 1; }
+}
+:root[data-motion="off"] .reveal, :root[data-motion="reduced"] .reveal { opacity: 1; }
+:root[data-motion="off"] .land .float-chip, :root[data-motion="off"] .land .emblem, :root[data-motion="reduced"] .land .float-chip, :root[data-motion="reduced"] .land .emblem { animation: none; }
+:root[data-motion="off"] .marquee .track { animation: none; }

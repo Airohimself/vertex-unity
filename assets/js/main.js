@@ -111,10 +111,15 @@ function restoreFocus(f) {
   try { if (f.start != null) el.setSelectionRange(f.start, f.end); } catch { /* not a text input */ }
 }
 
+let lastRouteKey = null;
 export function render() {
   applySettings();
   const root = $('#app');
   const ctx = ctxNow();
+  const routeKey = `${ctx.route.page}:${ctx.route.id || ''}`;
+  root.classList.toggle('route-enter', routeKey !== lastRouteKey); // entrance animation only on real navigation
+  lastRouteKey = routeKey;
+  const navScroll = $('.nav')?.scrollTop || 0;
   const focus = captureFocus();
   const keep = {};
   ['chatInput', 'aiInput'].forEach((id) => { const e = document.getElementById(id); if (e) keep[id] = e.value; });
@@ -126,6 +131,8 @@ export function render() {
   else html = A.shell(ctx, (PAGE_FN[page] || A.home)(ctx));
   root.innerHTML = html;
   Object.entries(keep).forEach(([id, v]) => { const e = document.getElementById(id); if (e) e.value = v; });
+  const nav = $('.nav'); if (nav) nav.scrollTop = navScroll;
+  if (page === 'landing') initLanding();
   restoreFocus(focus);
   if (page !== 'landing') document.title = `${t(page === 'essay' ? 'essays' : page)} · Vertex Unity`;
   else document.title = 'Vertex Unity — Dream. Plan. Apply. Achieve.';
@@ -182,6 +189,44 @@ function paletteRes() {
   return res.map((r, i) => `<a data-act="pal-pick" data-i="${i}" class="${i === L.sel ? 'sel' : ''}"><span class="tag">${esc(r.kind)}</span><div><b>${esc(r.title)}</b><div class="muted small">${esc(r.sub)}</div></div></a>`).join('');
 }
 function openPalette() { setLayer({ kind: 'modal', type: 'palette', q: '', sel: 0 }); }
+
+// ------------------------------------------------------------------ landing motion
+let revealCheck = null;
+function initLanding() {
+  const motionOn = !['off', 'reduced'].includes(S().settings.motion) && !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  if (!motionOn) return;
+  if (revealCheck) window.removeEventListener('scroll', revealCheck);
+  const targets = [...document.querySelectorAll('.section-title, .feat, .steps > *, .cta, .land-foot')];
+  targets.forEach((el) => el.classList.add('reveal'));
+  let queued = false;
+  const check = () => {
+    queued = false;
+    const limit = window.innerHeight - 40;
+    let left = 0;
+    targets.forEach((el) => {
+      if (el.classList.contains('in')) return;
+      if (el.getBoundingClientRect().top < limit) el.classList.add('in'); else left++;
+    });
+    if (!left) { window.removeEventListener('scroll', revealCheck); revealCheck = null; }
+  };
+  revealCheck = () => { if (!queued) { queued = true; requestAnimationFrame(check); } };
+  window.addEventListener('scroll', revealCheck, { passive: true });
+  check();
+  // count-up for the hero numbers
+  document.querySelectorAll('.stat-pill b').forEach((el) => {
+    const n = parseInt(el.textContent, 10);
+    if (!n || String(n) !== el.textContent.trim()) return;
+    const t0 = performance.now();
+    const dur = 1100;
+    const tick = (now) => {
+      const k = Math.min(1, (now - t0) / dur);
+      el.textContent = String(Math.round(n * (1 - Math.pow(1 - k, 3))));
+      if (k < 1) requestAnimationFrame(tick);
+    };
+    el.textContent = '0';
+    requestAnimationFrame(tick);
+  });
+}
 
 // ------------------------------------------------------------------ images
 function fileToDataUrl(file, maxDim, quality = 0.82) {

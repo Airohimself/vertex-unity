@@ -29,12 +29,12 @@ With `config.js` empty the app runs in **demo mode**: everything works and is sa
 
 I could not download them for you. Save these two files into the `assets/` folder:
 
-- https://vertex-unity.netlify.app/assets/campus.jpg  ->  `assets/campus.jpg`
-- https://vertex-unity.netlify.app/assets/emblem-128.webp  ->  `assets/emblem-128.webp`
+- wallpaper: save it as `assets/vu.jpg` (or `assets/campus.jpg`, both names work)
+- logo (optional): `assets/emblem-128.webp`. If it is missing, a built-in logo (`assets/emblem.svg`) is used.
 
 (Right-click -> Save image as. Do this before the Netlify site goes away. Without them the app still works and shows a gradient and a "V" logo.)
 
-Tip: keep `campus.jpg` under about 400 KB (resize to 1920 px wide) so you do not burn bandwidth.
+Tip: keep the wallpaper under about 400 KB (resize to 1920 px wide) so you do not burn bandwidth.
 
 ## 2. Create the Supabase project (free)
 
@@ -124,5 +124,6 @@ The figures (tuition, living costs, IELTS minimums, deadlines, acceptance rates,
 | "Invalid redirect" after email confirmation | Step 5 (redirect URLs). |
 | Vertex AI: "ANTHROPIC_API_KEY is not set" | Add the env variable, then **Redeploy**. |
 | Vertex AI: "Please sign in" | `SUPABASE_URL` / `SUPABASE_ANON_KEY` env vars must match `config.js`. |
+| "Email rate limit exceeded" when creating accounts | Supabase -> Authentication -> Sign In / Providers -> Email -> turn **off** "Confirm email" -> Save. Supabase's built-in email sender only allows a few emails per hour; with confirmation off, sign-up sends no email. For confirmation emails at scale, add your own SMTP (e.g. Resend) under Authentication -> Emails -> SMTP Settings. |
 | Chat does not update live | Re-run `schema.sql` (it adds the messages table to realtime). |
 | Uploads fail | Re-run `schema.sql` (creates the `user-files` bucket and its rules). |
