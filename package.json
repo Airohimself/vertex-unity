@@ -1,0 +1,13 @@
+{
+  "name": "vertex-unity",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Vertex Unity: university applications hub (static front end + one Vercel function + Supabase)",
+  "scripts": {
+    "dev": "npx vercel dev",
+    "data": "python3 scripts/generate_data.py",
+    "serve": "python3 -m http.server 5173"
+  },
+  "engines": { "node": ">=18" }
+}
